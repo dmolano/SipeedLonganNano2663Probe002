@@ -20,12 +20,36 @@
 // ---------------------------------------------------------------------
 // Private Constants
 // ---------------------------------------------------------------------
+#define FOREVER 1 /*!< for all time */
+// LEDS 1615
+#define TURN_ON_RED_LED1 sln2663_gpio_led_turn_on(&(sln_data_ptr->RED_LED1))
+#define TURN_OFF_RED_LED1 sln2663_gpio_led_turn_off(&(sln_data_ptr->RED_LED1))
+#define TURN_ON_GREEN_LED1 sln2663_gpio_led_turn_on(&(sln_data_ptr->GREEN_LED1))
+#define TURN_OFF_GREEN_LED1 sln2663_gpio_led_turn_off(&(sln_data_ptr->GREEN_LED1))
+#define TURN_ON_BLUE_LED1 sln2663_gpio_led_turn_on(&(sln_data_ptr->BLUE_LED1))
+#define TURN_OFF_BLUE_LED1 sln2663_gpio_led_turn_off(&(sln_data_ptr->BLUE_LED1))
 // ---------------------------------------------------------------------
 // Private Variables
 // ---------------------------------------------------------------------
 // ---------------------------------------------------------------------
 // Private Prototypes
 // ---------------------------------------------------------------------
+/*!
+    \brief      main init function
+    \param[in]  sln_data_ptr Sipeed Longan Nano data
+    \param[out] none
+    \retval     system error
+*/
+int sln2663_main_init(sln2663_ptr sln_data_ptr);
+
+/*!
+    \brief      main loop function
+    \param[in]  sln_data_ptr Sipeed Longan Nano data
+    \param[out] none
+    \retval     system error
+*/
+int sln2663_main_loop(sln2663_ptr sln_data_ptr);
+
 // ---------------------------------------------------------------------
 // Bodies
 // ---------------------------------------------------------------------
@@ -38,10 +62,87 @@
 int main(void)
 {
     int result = 0;
+    sln2663 sln_data;
 
+    result = sln2663_main_init(&sln_data);
+    if (result == NO_ERROR_INIT_SLN2663)
+    {
+        result = sln2663_main_loop(&sln_data);
+    }
     return result;
 }
 
 // ---------------------------------------------------------------------
 // Private Bodies
 // ---------------------------------------------------------------------
+/*!
+    \brief      main init function
+    \param[in]  sln_data_ptr Sipeed Longan Nano data
+    \param[out] none
+    \retval     system error
+*/
+int sln2663_main_init(sln2663_ptr sln_data_ptr)
+{
+    int result = NO_ERROR_INIT_SLN2663;
+
+    // LED1 --> LED1615
+    sln2663_led1_init(&(sln_data_ptr->led1.device),
+                      &(sln_data_ptr->led1.gpio_red),
+                      &(sln_data_ptr->led1.gpio_green),
+                      &(sln_data_ptr->led1.gpio_blue));
+    return result;
+}
+
+/*!
+    \brief      main loop function
+    \param[in]  sln_data_ptr Sipeed Longan Nano data
+    \param[out] none
+    \retval     system error
+*/
+int sln2663_main_loop(sln2663_ptr sln_data_ptr)
+{
+    int result = NO_ERROR_INIT_SLN2663;
+    int condition = FOREVER;
+
+    while (condition == FOREVER)
+    {
+        // ------------------------------------------>rrrrrggggggbbbbb
+        TURN_ON_RED_LED1;
+        DELAY_ONE_SECOND;
+        TURN_OFF_RED_LED1;
+        // ------------------------------------------>rrrrrggggggbbbbb
+        // ------------------------------------------>rrrrrggggggbbbbb
+        TURN_ON_RED_LED1;
+        DELAY_HUNDRED_MILISECOND;
+        TURN_OFF_RED_LED1;
+        // ------------------------------------------>rrrrrggggggbbbbb
+
+        DELAY_HALF_SECOND;
+
+        // ------------------------------------------>rrrrrggggggbbbbb
+        TURN_ON_GREEN_LED1;
+        DELAY_ONE_SECOND;
+        TURN_OFF_GREEN_LED1;
+        // ------------------------------------------>rrrrrggggggbbbbb
+        TURN_ON_GREEN_LED1;
+        DELAY_HUNDRED_MILISECOND;
+        TURN_OFF_GREEN_LED1;
+        // ------------------------------------------>rrrrrggggggbbbbb
+
+        DELAY_HALF_SECOND;
+
+        // ------------------------------------------>rrrrrggggggbbbbb
+        TURN_ON_BLUE_LED1;
+        DELAY_ONE_SECOND;
+        TURN_OFF_BLUE_LED1;
+        // ------------------------------------------>rrrrrggggggbbbbb
+        // ------------------------------------------>rrrrrggggggbbbbb
+        TURN_ON_BLUE_LED1;
+        DELAY_HUNDRED_MILISECOND;
+        TURN_OFF_BLUE_LED1;
+        // ------------------------------------------>rrrrrggggggbbbbb
+
+        DELAY_ONE_SECOND;
+    }
+    return result;
+}
