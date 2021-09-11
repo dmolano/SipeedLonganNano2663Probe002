@@ -90,6 +90,13 @@ int sln2663_main_init(sln2663_ptr sln_data_ptr)
                       &(sln_data_ptr->led1.gpio_red),
                       &(sln_data_ptr->led1.gpio_green),
                       &(sln_data_ptr->led1.gpio_blue));
+    rcu_periph_enum rcu_periph;
+
+    rcu_periph = calculate_rcu_periph(GPIOA);
+    sln2663_rcu_periph_clock_enable(rcu_periph);
+    gpio_init(GPIOA, GPIO_MODE_IN_FLOATING, GPIO_OSPEED_50MHZ, GPIO_PIN_8); // Keeps the input “High”. More commonly used.
+    // gpio_init(GPIOA, GPIO_MODE_IPU, GPIO_OSPEED_50MHZ, GPIO_PIN_12); // Keeps the input “High”. More commonly used.
+    // gpio_init(GPIOA, GPIO_MODE_IPD, GPIO_OSPEED_50MHZ, GPIO_PIN_12); // Keeps the input “Less”. Less commonly used.
     return result;
 }
 
@@ -103,46 +110,51 @@ int sln2663_main_loop(sln2663_ptr sln_data_ptr)
 {
     int result = NO_ERROR_INIT_SLN2663;
     int condition = FOREVER;
+    uint16_t switch_boot0_state;
 
     while (condition == FOREVER)
     {
-        // ------------------------------------------>rrrrrggggggbbbbb
-        TURN_ON_RED_LED1;
-        DELAY_ONE_SECOND;
-        TURN_OFF_RED_LED1;
-        // ------------------------------------------>rrrrrggggggbbbbb
-        // ------------------------------------------>rrrrrggggggbbbbb
-        TURN_ON_RED_LED1;
-        DELAY_HUNDRED_MILISECOND;
-        TURN_OFF_RED_LED1;
-        // ------------------------------------------>rrrrrggggggbbbbb
+        switch_boot0_state = gpio_input_bit_get(GPIOA, GPIO_PIN_8);
 
-        DELAY_HALF_SECOND;
+        if (switch_boot0_state)
+        {
+            // ------------------------------------------>rrrrrggggggbbbbb
+            TURN_ON_RED_LED1;
+            DELAY_ONE_SECOND;
+            TURN_OFF_RED_LED1;
+            // ------------------------------------------>rrrrrggggggbbbbb
+            // ------------------------------------------>rrrrrggggggbbbbb
+            TURN_ON_RED_LED1;
+            DELAY_HUNDRED_MILISECOND;
+            TURN_OFF_RED_LED1;
+            // ------------------------------------------>rrrrrggggggbbbbb
 
-        // ------------------------------------------>rrrrrggggggbbbbb
-        TURN_ON_GREEN_LED1;
-        DELAY_ONE_SECOND;
-        TURN_OFF_GREEN_LED1;
-        // ------------------------------------------>rrrrrggggggbbbbb
-        TURN_ON_GREEN_LED1;
-        DELAY_HUNDRED_MILISECOND;
-        TURN_OFF_GREEN_LED1;
-        // ------------------------------------------>rrrrrggggggbbbbb
+            DELAY_HALF_SECOND;
 
-        DELAY_HALF_SECOND;
+            // ------------------------------------------>rrrrrggggggbbbbb
+            TURN_ON_GREEN_LED1;
+            DELAY_ONE_SECOND;
+            TURN_OFF_GREEN_LED1;
+            // ------------------------------------------>rrrrrggggggbbbbb
+            TURN_ON_GREEN_LED1;
+            DELAY_HUNDRED_MILISECOND;
+            TURN_OFF_GREEN_LED1;
+            // ------------------------------------------>rrrrrggggggbbbbb
 
-        // ------------------------------------------>rrrrrggggggbbbbb
-        TURN_ON_BLUE_LED1;
-        DELAY_ONE_SECOND;
-        TURN_OFF_BLUE_LED1;
-        // ------------------------------------------>rrrrrggggggbbbbb
-        // ------------------------------------------>rrrrrggggggbbbbb
-        TURN_ON_BLUE_LED1;
-        DELAY_HUNDRED_MILISECOND;
-        TURN_OFF_BLUE_LED1;
-        // ------------------------------------------>rrrrrggggggbbbbb
+            DELAY_HALF_SECOND;
 
-        DELAY_ONE_SECOND;
+            // ------------------------------------------>rrrrrggggggbbbbb
+            TURN_ON_BLUE_LED1;
+            DELAY_ONE_SECOND;
+            TURN_OFF_BLUE_LED1;
+            // ------------------------------------------>rrrrrggggggbbbbb
+            // ------------------------------------------>rrrrrggggggbbbbb
+            TURN_ON_BLUE_LED1;
+            DELAY_HUNDRED_MILISECOND;
+            TURN_OFF_BLUE_LED1;
+            // ------------------------------------------>rrrrrggggggbbbbb
+            DELAY_ONE_SECOND;
+        }
     }
     return result;
 }
